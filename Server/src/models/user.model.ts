@@ -2,12 +2,13 @@ import mongoose  , {Document , Schema }from "mongoose";
 import { hashValue, compareValue} from "../utils/bcrypt";
 
 export interface UserDocument extends Document {
-    name: String;
-    email: String;
-    password: String;
-    avatar?: String | null
+    name: string;
+    email: string;
+    password: string;
+    avatar?: string | null;
     createdAt: Date;
     updatedAt: Date;
+    comparePassword: (value: string) => Promise<boolean>;
 }
 
 
@@ -39,18 +40,18 @@ export const UserSchema = new Schema<UserDocument>({
         }
         return ret ;
     }
-}
+},
 }
 )
 
-UserSchema.pre("save" , async function(next){
-   if(!this.password && this.isModified("password")){
-    this.password = await hashValue(this.password) 
-   }
-}) ;
+UserSchema.pre("save", async function () {
+    if (this.isModified("password") && this.password) {
+        this.password = await hashValue(this.password);
+    }
+});
 
-UserSchema.methods.comparePassword = async function(value:string){
-    return await compareValue(value , this.password) ;
+UserSchema.methods.comparePassword = async function(value: string){
+    return compareValue(value , this.password) ;
 }
 
 const UserModel = mongoose.model<UserDocument>("User" , UserSchema) ;
