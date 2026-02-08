@@ -40,8 +40,10 @@ export const logoutController = asyncHandler(async (req: Request, res: Response)
     });
 });
 
-// export const authStatusController = asyncHandler(async (req: Request, res: Response) => {
-//     return clearJwtAuthCookie(res).status(HTTPSTATUS.OK).json({
-//         message: "User logged out successfully",
-//     });
-// });
+export const authStatusController = asyncHandler(async (req: Request, res: Response) => {
+    const user = req.user;
+    return res.status(HTTPSTATUS.OK).json({
+        message: "Authenticated user",
+        user,
+    });
+});
