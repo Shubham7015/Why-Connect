@@ -14,7 +14,6 @@ import AvatarWithBadge from "../avatar-with-badge";
 import { Checkbox } from "../ui/checkbox";
 import { useNavigate } from "react-router-dom";
 
-
 export const NewChatPopover = memo(() => {
   const navigate = useNavigate();
   const { fetchAllUsers, users, isUsersLoading, createChat, isCreatingChat } =
@@ -22,7 +21,7 @@ export const NewChatPopover = memo(() => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isGroupMode, setIsGroupMode] = useState(false);
-  const [groupName, setGroupName] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
   const [loadingUserId, setLoadingUserId] = useState<string | null>(null);
@@ -33,7 +32,9 @@ export const NewChatPopover = memo(() => {
 
   const toggleUserSelection = (id: string) => {
     setSelectedUsers((prev) =>
-      prev.includes(id) ? prev.filter((userId) => userId !== id) : [...prev, id]
+      prev.includes(id)
+        ? prev.filter((userId) => userId !== id)
+        : [...prev, id],
     );
   };
 
@@ -43,7 +44,7 @@ export const NewChatPopover = memo(() => {
 
   const resetState = () => {
     setIsGroupMode(false);
-    setGroupName("");
+    setSearchTerm("");
     setSelectedUsers([]);
   };
 
@@ -53,15 +54,17 @@ export const NewChatPopover = memo(() => {
   };
 
   const handleCreateGroup = async () => {
-    if (!groupName.trim() || selectedUsers?.length === 0) return;
+    if (!searchTerm.trim() || selectedUsers?.length === 0) return;
     const response = await createChat({
       isGroup: true,
       participants: selectedUsers,
-      groupName: groupName,
+      groupName: searchTerm,
     });
     setIsOpen(false);
     resetState();
-    navigate(`/chat/${response?._id}`);
+    if (response?._id) {
+      navigate(`/chat/${response._id}`);
+    }
   };
 
   const handleCreateChat = async (userId: string) => {
@@ -73,13 +76,19 @@ export const NewChatPopover = memo(() => {
       });
       setIsOpen(false);
       resetState();
-      navigate(`/chat/${response?._id}`);
+      if (response?._id) {
+        navigate(`/chat/${response._id}`);
+      }
     } finally {
       setLoadingUserId(null);
       setIsOpen(false);
       resetState();
     }
   };
+
+  const filteredUsers = users?.filter((user) =>
+    user.name?.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   return (
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
@@ -114,10 +123,8 @@ export const NewChatPopover = memo(() => {
 
           <InputGroup>
             <InputGroupInput
-              value={isGroupMode ? groupName : ""}
-              onChange={
-                isGroupMode ? (e) => setGroupName(e.target.value) : undefined
-              }
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={isGroupMode ? "Enter group name" : "Search name"}
             />
             <InputGroupAddon>
@@ -133,7 +140,7 @@ export const NewChatPopover = memo(() => {
         >
           {isUsersLoading ? (
             <Spinner className="w-6 h-6" />
-          ) : users && users?.length === 0 ? (
+          ) : filteredUsers && filteredUsers?.length === 0 ? (
             <div className="text-center text-muted-foreground">
               No users found
             </div>
@@ -143,7 +150,7 @@ export const NewChatPopover = memo(() => {
                 disabled={isCreatingChat}
                 onClick={() => setIsGroupMode(true)}
               />
-              {users?.map((user) => (
+              {filteredUsers?.map((user) => (
                 <ChatUserItem
                   key={user._id}
                   user={user}
@@ -154,7 +161,7 @@ export const NewChatPopover = memo(() => {
               ))}
             </>
           ) : (
-            users?.map((user) => (
+            filteredUsers?.map((user) => (
               <GroupUserItem
                 key={user._id}
                 user={user}
@@ -172,7 +179,7 @@ export const NewChatPopover = memo(() => {
               className="w-full"
               disabled={
                 isCreatingChat ||
-                !groupName.trim() ||
+                !searchTerm.trim() ||
                 selectedUsers.length === 0
               }
             >
@@ -185,7 +192,6 @@ export const NewChatPopover = memo(() => {
     </Popover>
   );
 });
-
 NewChatPopover.displayName = "NewChatPopover";
 
 const UserAvatar = memo(({ user }: { user: UserType }) => (
@@ -215,7 +221,7 @@ const NewGroupItem = memo(
       </div>
       <span>New Group</span>
     </button>
-  )
+  ),
 );
 
 NewGroupItem.displayName = "NewGroupItem";
@@ -243,7 +249,7 @@ const ChatUserItem = memo(
       <UserAvatar user={user} />
       {isLoading && <Spinner className="absolute right-2 w-4 h-4 ml-auto" />}
     </button>
-  )
+  ),
 );
 
 ChatUserItem.displayName = "ChatUserItem";
@@ -271,7 +277,7 @@ const GroupUserItem = memo(
         onCheckedChange={() => onToggle(user._id)}
       />
     </label>
-  )
+  ),
 );
 
 GroupUserItem.displayName = "GroupUserItem";
