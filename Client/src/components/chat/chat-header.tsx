@@ -1,4 +1,3 @@
-
 import { getOtherUserAndGroup } from "@/lib/helper";
 import { PROTECTED_ROUTES } from "@/routes/routes";
 import type { ChatType } from "@/types/chat.type";
@@ -14,7 +13,7 @@ const ChatHeader = ({ chat, currentUserId }: Props) => {
   const navigate = useNavigate();
   const { name, subheading, avatar, isOnline, isGroup } = getOtherUserAndGroup(
     chat,
-    currentUserId
+    currentUserId,
   );
 
   return (
