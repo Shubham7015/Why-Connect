@@ -64,8 +64,11 @@ export const initializeSocket = (httpServer: HTTPServer) => {
       "chat:join",
       async (chatId: string, callBack?: (err?: string) => void) => {
         try {
-            await validateChatParticipant(chatId , userId) ; 
+          await validateChatParticipant(chatId, userId);
           socket.join(`chat:${chatId}`);
+
+          console.log(`User ${userId} joined room chat:${chatId}`);
+
           callBack?.();
         } catch (error) {
           callBack?.("Error joining chat ");
@@ -74,64 +77,103 @@ export const initializeSocket = (httpServer: HTTPServer) => {
     );
 
     socket.on("chat:leave", (chatId: string) => {
-        if(chatId){
-            socket.leave(`chat:${chatId}`);
-            console.log(`User ${userId} left room chat:${chatId}`);
-        }
+      if (chatId) {
+        socket.leave(`chat:${chatId}`);
+        console.log(`User ${userId} left room chat:${chatId}`);
+      }
     });
 
     socket.on("disconnect", () => {
-        if(onlineUsers.get(userId) === newSocketId){
-            if(userId) onlineUsers.delete(userId);
-            io?.emit("online:users", Array.from(onlineUsers.keys()));
-            console.log("socket is disconnected",{userId , newSocketId})
-        }
+      if (onlineUsers.get(userId) === newSocketId) {
+        if (userId) onlineUsers.delete(userId);
+        io?.emit("online:users", Array.from(onlineUsers.keys()));
+        console.log("socket is disconnected", { userId, newSocketId });
+      }
     });
   });
 };
 
 function getIO() {
-    if(!io) throw new Error("Socket.IO not initialized") ;
-    return io ;
+  if (!io) throw new Error("Socket.IO not initialized");
+  return io;
 }
 export const emitNewChatToParticipants = (
-    participants: string[] = [],
-    chat: any
+  participants: string[] = [],
+  chat: any,
 ) => {
-    const io = getIO() ;
-    for(const participantId of participants){
-        io.to(`user:${participantId}`).emit("chat:new",chat) ;
-    }
+  const io = getIO();
+  for (const participantId of participants) {
+    io.to(`user:${participantId}`).emit("chat:new", chat);
+  }
 };
 
 export const emitNewMessageToChatRoom = (
-    senderId:string,// userID that sent the message
-    chatId:string,
-    message:any
+  senderId: string, // userID that sent the message
+  chatId: string,
+  message: any,
 ) => {
-    const io = getIO() ;
-    const senderSocketId = onlineUsers.get(senderId) ;
+  const io = getIO();
+  const senderSocketId = onlineUsers.get(senderId?.toString());
 
-    if(senderSocketId) {
-        io.to(`Chat:${chatId}`).except(senderSocketId).emit("message:new",message) ;
-    } else {
-        io.to(`Chat:${chatId}`).emit("message:new",message) ;
-    }
+  console.log(senderId, "senderId");
+  console.log(senderSocketId, "senderSocketId exist");
+  console.log("All online users:", Object.fromEntries(onlineUsers));
+
+  if (senderSocketId) {
+    io.to(`chat:${chatId}`).except(senderSocketId).emit("message:new", message);
+  } else {
+    io.to(`chat:${chatId}`).emit("message:new", message);
+  }
 };
 
 export const emitLastMessageToParticipants = (
-    participants: string[] = [],
-    chatId: string,
-    lastMessage: any
-
+  participants: string[] = [],
+  chatId: string,
+  lastMessage: any,
 ) => {
-    const io = getIO() ;
-    const payload = {chatId,lastMessage} 
+  const io = getIO();
+  const payload = { chatId, lastMessage };
 
-    for(const participantId of participants){
-        io.to(`user:${participantId}`).emit("chat:update",payload) ;
-    }
-} ;
+  for (const participantId of participants) {
+    io.to(`user:${participantId}`).emit("chat:update", payload);
+  }
+};
 
 
+export const emitChatAI =({
+  chatId,
+  chunk=null,
+  sender,
+  done=false,
+  message=null,
+}:{
+  chatId:string;
+  chunk?: string | null;
+  sender?:any;
+  done?:boolean,
+  message?:any,
+}) => {
+  const io = getIO();
+  if(chunk?.trim() && !done){
+    io.to(`chat:${chatId}`).emit("chat:ai", {
+      chatId,
+      chunk,
+      done,
+      message: null,
+      sender,
+    })
 
+   return ;
+  }
+
+  if(done){
+    io.to(`chat:${chatId}`).emit("chat:ai",{
+      chatId,
+      chunk: null ,
+      done,
+      message,
+      sender,
+    });
+    return ;
+  }
+}
