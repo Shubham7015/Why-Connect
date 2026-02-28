@@ -3,6 +3,7 @@ import { Server as HTTPServer } from "http";
 import { Env } from "../config/env.config";
 import jwt from "jsonwebtoken";
 import { validateChatParticipant } from "../services/chat.service";
+import UserModel from "../models/user.model";
 
 interface AuthenticatedSocket extends Socket {
   userId?: string;
@@ -83,6 +84,27 @@ export const initializeSocket = (httpServer: HTTPServer) => {
       }
     });
 
+    // Call signaling
+    socket.on("call:offer", async ({ targetUserId, type }) => {
+      const caller = await UserModel.findById(userId).select("name avatar _id");
+      if (caller) {
+        io?.to(`user:${targetUserId}`).emit("call:offer", { caller, type });
+      }
+    });
+
+    socket.on("call:answer", (data) => {
+      const { targetUserId } = data;
+      io?.to(`user:${targetUserId}`).emit("call:answer", data);
+    });
+
+    socket.on("call:reject", ({ targetUserId }) => {
+      io?.to(`user:${targetUserId}`).emit("call:rejected");
+    });
+
+    socket.on("call:end", ({ targetUserId }) => {
+      io?.to(`user:${targetUserId}`).emit("call:ended");
+    });
+
     socket.on("disconnect", () => {
       if (onlineUsers.get(userId) === newSocketId) {
         if (userId) onlineUsers.delete(userId);
@@ -139,41 +161,40 @@ export const emitLastMessageToParticipants = (
   }
 };
 
-
-export const emitChatAI =({
+export const emitChatAI = ({
   chatId,
-  chunk=null,
+  chunk = null,
   sender,
-  done=false,
-  message=null,
-}:{
-  chatId:string;
+  done = false,
+  message = null,
+}: {
+  chatId: string;
   chunk?: string | null;
-  sender?:any;
-  done?:boolean,
-  message?:any,
+  sender?: any;
+  done?: boolean;
+  message?: any;
 }) => {
   const io = getIO();
-  if(chunk?.trim() && !done){
+  if (chunk?.trim() && !done) {
     io.to(`chat:${chatId}`).emit("chat:ai", {
       chatId,
       chunk,
       done,
       message: null,
       sender,
-    })
+    });
 
-   return ;
+    return;
   }
 
-  if(done){
-    io.to(`chat:${chatId}`).emit("chat:ai",{
+  if (done) {
+    io.to(`chat:${chatId}`).emit("chat:ai", {
       chatId,
-      chunk: null ,
+      chunk: null,
       done,
       message,
       sender,
     });
-    return ;
+    return;
   }
-}
+};
