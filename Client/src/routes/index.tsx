@@ -4,13 +4,11 @@ import { authRoutesPaths, protectedRoutesPaths } from "./routes";
 import AppLayout from "@/layouts/app-layout";
 import RouteGuard from "./route-guard";
 
-
-
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Auth / Public routes */}
-      <Route path="/" element={<RouteGuard requireAuth={false}/>}>
+      <Route path="/" element={<RouteGuard requireAuth={false} />}>
         <Route element={<BaseLayout />}>
           {authRoutesPaths?.map((route) => (
             <Route key={route.path} path={route.path} element={route.element} />
@@ -18,15 +16,17 @@ const AppRoutes = () => {
         </Route>
       </Route>
 
-       <Route path="/" element={<RouteGuard requireAuth/>}>
+      <Route path="/" element={<RouteGuard requireAuth={true} />}>
         <Route element={<AppLayout />}>
           {protectedRoutesPaths?.map((route) => (
-            <Route key={route.path} path={route.path} element={route.element} />
+            <Route
+              key={route.path}
+              path={route.path.replace(/^\//, "")}
+              element={route.element}
+            />
           ))}
         </Route>
       </Route>
-
-
     </Routes>
   );
 };

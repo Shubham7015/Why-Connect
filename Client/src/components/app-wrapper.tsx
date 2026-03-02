@@ -10,7 +10,7 @@ const AppWrapper = ({ children }: Props) => {
     <div className="h-full">
       {/* implement the toolBar */}
       <AsideBar />
-      <main className="h-full lg:pl-12">{children}</main>
+      <main className="h-full pl-0 lg:pl-12">{children}</main>
     </div>
   );
 };

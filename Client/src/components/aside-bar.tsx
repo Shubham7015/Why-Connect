@@ -22,7 +22,7 @@ const AsideBar = () => {
   const isOnline = user?._id ? onlineUsers.includes(user._id) : false;
 
   return (
-    <aside className="top-0 fixed inset-y-0 w-12 left-0 z-50 h-svh bg-primary/95 shadow-lg border-r border-white/10">
+    <aside className="top-0 fixed inset-y-0 w-12 left-0 z-50 h-svh bg-primary/95 shadow-lg border-r border-white/10 hidden lg:flex">
       <div className="h-full w-full px-1 pt-1 pb-6 flex flex-col items-center justify-between">
         <Logo
           url={PROTECTED_ROUTES.CHAT}

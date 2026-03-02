@@ -12,6 +12,7 @@ import { errorHandler } from './middlewares/errorHandler.middleware';
 import "./config/passport.config" ; 
 import routes from "./routes" ; 
 import { initializeSocket } from "./lib/socket" ;
+import path from 'path';
 
 const app = express() ;
 const server = http.createServer(app) ;
@@ -42,6 +43,17 @@ app.get(
 }));
 
 app.use('/api',routes) ;
+
+if(Env.NODE_ENV === "production"){
+    const clientPath = path.resolve(__dirname,"../../client/dist") ;
+
+    // serve the static side 
+    app.use(express.static(clientPath)) ;
+
+    app.get(/^(?!\/api).*/,(req:Request , res:Response)=>{
+        res.sendFile(path.join(clientPath,"index.html")) ;
+    });
+}
 
 app.use(errorHandler);
 

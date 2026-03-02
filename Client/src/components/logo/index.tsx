@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logoSvg from "@/assets/whop-logo.svg";
+import logoSvg from "@/assets/whyConnect-logo.svg";
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
@@ -16,10 +16,10 @@ const Logo = ({
   textClass,
 }: LogoProps) => (
   <Link to={url} className="flex items-center gap-2 w-fit">
-    <img src={logoSvg} alt="Whop" className={cn(imgClass)} />
+    <img src={logoSvg} alt="WhyConnect" className={cn(imgClass)} />
     {showText && (
       <span className={cn("font-semibold text-lg leading-tight", textClass)}>
-        Whop.
+        WhyConnect.
       </span>
     )}
   </Link>

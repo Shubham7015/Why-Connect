@@ -22,6 +22,7 @@ export const NewChatPopover = memo(() => {
   const [isOpen, setIsOpen] = useState(false);
   const [isGroupMode, setIsGroupMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [groupName, setGroupName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
   const [loadingUserId, setLoadingUserId] = useState<string | null>(null);
@@ -45,6 +46,7 @@ export const NewChatPopover = memo(() => {
   const resetState = () => {
     setIsGroupMode(false);
     setSearchTerm("");
+    setGroupName("");
     setSelectedUsers([]);
   };
 
@@ -54,11 +56,11 @@ export const NewChatPopover = memo(() => {
   };
 
   const handleCreateGroup = async () => {
-    if (!searchTerm.trim() || selectedUsers?.length === 0) return;
+    if (!groupName.trim() || selectedUsers?.length === 0) return;
     const response = await createChat({
       isGroup: true,
       participants: selectedUsers,
-      groupName: searchTerm,
+      groupName: groupName,
     });
     setIsOpen(false);
     resetState();
@@ -121,14 +123,26 @@ export const NewChatPopover = memo(() => {
             </h3>
           </div>
 
+          {isGroupMode && (
+            <InputGroup>
+              <InputGroupInput
+                value={groupName}
+                onChange={(e) => setGroupName(e.target.value)}
+                placeholder="Enter group name"
+              />
+              <InputGroupAddon>
+                <UsersIcon />
+              </InputGroupAddon>
+            </InputGroup>
+          )}
           <InputGroup>
             <InputGroupInput
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder={isGroupMode ? "Enter group name" : "Search name"}
+              placeholder="Search name"
             />
             <InputGroupAddon>
-              {isGroupMode ? <UsersIcon /> : <Search />}
+              <Search />
             </InputGroupAddon>
           </InputGroup>
         </div>
@@ -179,7 +193,7 @@ export const NewChatPopover = memo(() => {
               className="w-full"
               disabled={
                 isCreatingChat ||
-                !searchTerm.trim() ||
+                !groupName.trim() ||
                 selectedUsers.length === 0
               }
             >
@@ -199,7 +213,7 @@ const UserAvatar = memo(({ user }: { user: UserType }) => (
     <AvatarWithBadge name={user.name} src={user.avatar ?? ""} />
     <div className="flex-1 min-w-0">
       <h5 className="text-[13.5px] font-medium truncate">{user.name}</h5>
-      <p className="text-xs text-muted-foreground">Hey there! I'm using whop</p>
+      <p className="text-xs text-muted-foreground">Hey there! I'm using whyConnect</p>
     </div>
   </>
 ));

@@ -31,8 +31,8 @@ const ChatList = () => {
         chat.participants?.some(
           (p) =>
             p._id !== currentUserId &&
-            p.name?.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+            p.name?.toLowerCase().includes(searchQuery.toLowerCase()),
+        ),
     ) || [];
 
   useEffect(() => {
@@ -85,9 +85,9 @@ const ChatList = () => {
       border-r
       border-border
       bg-sidebar
-      max-w-[calc(100%-40px)]
       w-full
-      left-10
+      left-0
+      lg:left-12
       z-98
     "
     >
