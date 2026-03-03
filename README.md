@@ -25,6 +25,7 @@
 - **AI Chat Assistant** — Chat with an AI bot powered by Google Gemini AI
 - **Authentication** — Secure JWT-based auth with Passport.js
 - **Group & Direct Chats** — Create group conversations or chat one-on-one
+- **Image Sharing** — Send images in chats, stored via Cloudinary
 - **Reply to Messages** — Reply to specific messages in a conversation
 - **Dark / Light Mode** — Theme toggle with next-themes
 - **Responsive Design** — Fully responsive UI built with Tailwind CSS & Shadcn UI
@@ -57,6 +58,7 @@
 | MongoDB + Mongoose   | Database & ODM     |
 | Socket.IO            | Real-Time Events   |
 | Passport.js + JWT    | Authentication     |
+| Cloudinary           | Chat Image Storage |
 | Google Gemini AI SDK | AI Chat Assistant  |
 | Zod                  | Request Validation |
 | Helmet               | Security Headers   |
@@ -140,6 +142,9 @@ JWT_SECRET=your_jwt_secret
 JWT_EXPIRES_IN=7d
 FRONTEND_ORIGIN=http://localhost:5173
 GOOGLE_GENERATIVE_AI_API_KEY=your_google_ai_api_key
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
 
 Start the dev server:
