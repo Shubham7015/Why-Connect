@@ -2,7 +2,8 @@ import { ErrorRequestHandler } from "express";
 import {HTTPSTATUS} from "../config/http.config";
 import { AppError, ErrorCodes} from "../utils/app-error";
 
-export const errorHandler: ErrorRequestHandler = (error,
+export const errorHandler: ErrorRequestHandler = (
+    error,
     req,
     res,
     next): any => {
@@ -17,7 +18,7 @@ export const errorHandler: ErrorRequestHandler = (error,
 
     return res.status(HTTPSTATUS.INTERNAL_SERVER_ERROR).json({
         message:"Internal Server Error",
-        error: error?.message || "Something went wrong"
+        error: error instanceof Error ? error.message : "Something went wrong"
     })
 
 
