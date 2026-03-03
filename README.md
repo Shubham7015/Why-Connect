@@ -211,12 +211,7 @@ The server serves the built Client files in production mode.
 
 ---
 
-## 📄 License
-
-This project is open source and available under the [ISC License](LICENSE).
-
----
-
 <p align="center">
   Built with ❤️ by <a href="https://github.com/Shubham7015">Shubham</a>
 </p>
+
