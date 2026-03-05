@@ -136,7 +136,7 @@ Create a `.env` file in the `Server/` directory:
 
 ```env
 NODE_ENV=development
-PORT=5000
+PORT=8000
 MONGO_URL=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 JWT_EXPIRES_IN=7d
@@ -214,4 +214,5 @@ The server serves the built Client files in production mode.
 <p align="center">
   Built with ❤️ by <a href="https://github.com/Shubham7015">Shubham</a>
 </p>
+
 
