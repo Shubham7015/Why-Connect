@@ -43,6 +43,10 @@ app.get(
 }));
 
 app.use('/api',routes) ;
+app.get('/ads.txt', (req, res) => {
+  res.type('text/plain');
+  res.send('google.com, pub-5450358714169074, DIRECT, f08c47fec0942fa0');
+});
 
 if(Env.NODE_ENV === "production"){
     const clientPath = path.resolve(__dirname,"../../Client/dist") ;
@@ -56,11 +60,7 @@ if(Env.NODE_ENV === "production"){
 }
 
 app.use(errorHandler);
-// Google AdSense ads.txt
-app.get('/ads.txt', (req, res) => {
-  res.type('text/plain');
-  res.send('google.com, pub-5450358714169074, DIRECT, f08c47fec0942fa0');
-});
+
 
 server.listen(Env.PORT, async()=>{
     await connectDatabase() ;
