@@ -23,6 +23,7 @@
     "@types/mongoose": "^5.11.96",
     "@types/node": "^22.19.13",
     "@types/passport": "^1.0.17",
+    "@types/passport-google-oauth20": "^2.0.17",
     "@types/passport-jwt": "^4.0.1",
     "ai": "^5.0.137",
     "bcryptjs": "^3.0.3",
@@ -42,7 +43,6 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/passport-google-oauth20": "^2.0.17",
     "nodemon": "^3.1.11",
     "ts-node": "^10.9.2"
   }
