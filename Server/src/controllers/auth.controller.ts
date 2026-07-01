@@ -4,6 +4,7 @@ import { loginSchema, registerSchema } from "../validators/auth.validator";
 import { registerService , loginService } from "../services/auth.service";
 import { clearJwtAuthCookie, setJwtAuthCookie } from "../utils/cookie";
 import { HTTPSTATUS } from "../config/http.config";
+import { Env } from "../config/env.config";
 
 export const registerController = asyncHandler(
   async (req: Request, res: Response) => {
@@ -47,3 +48,15 @@ export const authStatusController = asyncHandler(async (req: Request, res: Respo
         user,
     });
 });
+
+export const googleCallbackController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = req.user as any;
+    const userId = user._id.toString();
+
+    setJwtAuthCookie({ res, userId });
+
+    // Redirect to frontend after successful Google auth
+    return res.redirect(Env.FRONTEND_ORIGIN);
+  },
+);

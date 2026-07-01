@@ -7,6 +7,7 @@ export interface UserDocument extends Document {
   password?: string;
   avatar?: string | null;
   isAI: boolean;
+  googleId?: string;
   createdAt: Date;
   updatedAt: Date;
 
@@ -30,8 +31,13 @@ export const UserSchema = new Schema<UserDocument>(
     password: {
       type: String,
       required: function (this: UserDocument) {
-        return !this.isAI;
+        return !this.isAI && !this.googleId;
       },
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
     },
     avatar: {
       type: String,
