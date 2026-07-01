@@ -146,7 +146,7 @@ const ChatFooter = ({
                     {...field}
                     autoComplete="off"
                     placeholder="Type new message"
-                    className="min-h-[40px] bg-background"
+                    className="min-h-10 bg-background"
                   />
                 </FormItem>
               )}

@@ -95,7 +95,7 @@ const ChatMessageBody = memo(({ message, onReply }: Props) => {
               <img
                 src={message?.image || ""}
                 alt=""
-                className="rounded-lg w-full max-w-[250px] lg:max-w-[320px] max-h-[300px] object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                className="rounded-lg w-full max-w-62.5 lg:max-w-[320px] max-h-75 object-cover cursor-pointer hover:opacity-90 transition-opacity"
                 loading="lazy"
               />
             )}
